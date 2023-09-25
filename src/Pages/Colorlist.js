@@ -1,5 +1,10 @@
-import React from 'react'
-import {  Table } from 'antd';
+import React, { useEffect } from 'react'
+import { Table } from 'antd';
+import {BiEdit} from "react-icons/bi"
+import { AiFillDelete } from "react-icons/ai"
+import { useDispatch, useSelector } from 'react-redux';
+import {Link} from 'react-router-dom';
+import { getColors } from '../features/color/colorSlice.js';
 const columns = [
     {
       title: 'SNo',
@@ -10,25 +15,33 @@ const columns = [
       dataIndex: 'name',
     },
     {
-      title: 'Product',
-      dataIndex: 'product',
-    },
-    {
-      title: 'Status',
-      dataIndex: 'status',
+      title: 'Action',
+      dataIndex: 'action',
     },
   ];
-  const data1 = [];
-  for (let i = 0; i < 46; i++) {
+
+const Colorlist = () =>
+{
+  const dispatch = useDispatch();
+  useEffect(() =>
+  {
+    dispatch(getColors());
+  }, []);
+   
+  const colorState = useSelector((state) => state.color.colors)
+   const data1 = [];
+  for (let i = 0; i < colorState.length; i++) {
     data1.push({
-      key: i,
-      name: `Edward King ${i}`,
-      product: 32,
-      status: `London, Park Lane no. ${i}`,
+      key: i +1 ,
+      name: colorState[i].title,
+     
+       action: (<>
+        <Link to="/" className='fs-3 text-danger'><BiEdit /></Link>
+        <Link className='ms-3 fs-3 text-danger' to="/"><AiFillDelete/></Link>
+      </>),
     });
   }
 
-const Colorlist = () => {
   return (
    <div>
     <h3 className='mb-4 title'>Color list</h3>
