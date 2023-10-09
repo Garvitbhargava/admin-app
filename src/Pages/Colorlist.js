@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react'
+import React, { useEffect,useState } from 'react'
 import { Table } from 'antd';
 import {BiEdit} from "react-icons/bi"
 import { AiFillDelete } from "react-icons/ai"
 import { useDispatch, useSelector } from 'react-redux';
 import {Link} from 'react-router-dom';
-import { getColors } from '../features/color/colorSlice.js';
+import { deleteAColor, getColors, resetState } from '../features/color/colorSlice.js';
+import CustomModal from '../Components/CustomModal';
 const columns = [
     {
       title: 'SNo',
@@ -22,9 +23,20 @@ const columns = [
 
 const Colorlist = () =>
 {
+  const [open, setOpen] = useState(false);
+  const [colorId, setcolorId] = useState("");
+  const showModal = (e) => {
+    setOpen(true);
+    setcolorId(e);
+  };
+  
+  const hideModal = () => {
+    setOpen(false);
+  };
   const dispatch = useDispatch();
   useEffect(() =>
   {
+    dispatch(resetState());
     dispatch(getColors());
   }, []);
    
@@ -36,11 +48,23 @@ const Colorlist = () =>
       name: colorState[i].title,
      
        action: (<>
-        <Link to="/" className='fs-3 text-danger'><BiEdit /></Link>
-        <Link className='ms-3 fs-3 text-danger' to="/"><AiFillDelete/></Link>
+        <Link to={`/admin/color/${colorState[i]._id}`} className='fs-3 text-danger'><BiEdit /></Link>
+        <button className='ms-3 fs-3 text-danger bg-transparent border-0'
+         onClick={() => showModal(colorState[i]._id)}>
+           <AiFillDelete />
+         </button>
       </>),
     });
   }
+  const deleteColor = (e) =>
+  {
+   
+    dispatch(deleteAColor(e));
+    setOpen(false);
+    setTimeout(() => {
+      dispatch(getColors())
+    },100);
+}
 
   return (
    <div>
@@ -50,6 +74,14 @@ const Colorlist = () =>
        columns={columns} 
        dataSource={data1} />
       </div>
+       <CustomModal
+        hideModal={hideModal}
+        open={open}
+        performAction={() =>
+        {
+          deleteColor(colorId);
+        }}
+        title="Are you sure you want to delete this Color?" />
    </div>
   )
 }
