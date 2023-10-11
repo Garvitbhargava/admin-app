@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react'
+import React, { useEffect,useState } from 'react'
 import { Table } from 'antd';
-import {BiEdit} from "react-icons/bi"
-import { AiFillDelete } from "react-icons/ai"
+import { AiFillDelete,AiOutlineEye } from "react-icons/ai"
 import { useActionData } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {Link} from 'react-router-dom';
-import { getEnquiries } from '../features/enquiry/enquirySlice';
+import { deleteAEnquiry, getAEnquiry, getEnquiries, resetState, updateAEnquiry } from '../features/enquiry/enquirySlice';
+import CustomModal from '../Components/CustomModal';
 const columns = [
     {
       title: 'SNo',
@@ -38,9 +38,20 @@ const columns = [
 
 const Enquiries = () =>
 {
+  const [open, setOpen] = useState(false);
+  const [enqId, setenqId] = useState("");
+  const showModal = (e) => {
+    setOpen(true);
+    setenqId(e);
+  };
+  
+  const hideModal = () => {
+    setOpen(false);
+  };
   const dispatch = useDispatch();
   useEffect(() =>
   {
+    dispatch(resetState());
     dispatch(getEnquiries());
   }, []);
    const enqState = useSelector((state) => state.enquiry.enquiries)
@@ -52,17 +63,48 @@ const Enquiries = () =>
       email: enqState[i].email,
        mobile: enqState[i].mobile,
       status:  (<>
-        <select name='' className='form-control form-select' id=''>
-          <option value="">Set Status</option>
-       </select>
+        <select name=''defaultValue={enqState[i].status ? enqState[i].status : "Submitted"} className='form-control form-select' id=''
+        onChange={(e) => setEnquiryStatus(e.target.value,enqState[i]._id)}>
+        <option value="Submitted" >
+            Submitted
+        </option>
+        <option value="Contacted" >
+            Contacted
+        </option>
+        <option value="In Progress" >
+            In Progress
+        </option>
+        <option value="Resolved" >
+            Resolved
+        </option>
+    </select>
       </>),
   
      
        action: (<>
-        <Link className='ms-3 fs-3 text-danger' to="/"><AiFillDelete/></Link>
+        <Link className='ms-3 fs-3 text-danger' to={`/admin/enquiries/${enqState[i]._id}`}>
+          <AiOutlineEye/>
+          </Link>
+          <button className='ms-3 fs-3 text-danger bg-transparent border-0'
+         onClick={() => showModal(enqState[i]._id)}>
+           <AiFillDelete />
+         </button>
       </>),
     });
   }
+  const setEnquiryStatus = (e,i) => {
+const data = {id:i, enqData:e};
+dispatch(updateAEnquiry(data));
+
+  }
+  const deleteEnq =(e) =>{
+    dispatch(deleteAEnquiry(e))
+    setOpen(false);
+   setTimeout(() =>{
+    dispatch(getEnquiries());
+   },100)
+}
+  
   return (
    <div>
     <h3 className='mb-4 title'>Enquires</h3>
@@ -71,6 +113,14 @@ const Enquiries = () =>
        columns={columns} 
        dataSource={data1} />
       </div>
+       <CustomModal
+        hideModal={hideModal}
+        open={open}
+        performAction={() =>
+        {
+          deleteEnq(enqId);
+        }}
+        title="Are you sure you want to delete this Enquiry?" />
    </div>
   )
 }

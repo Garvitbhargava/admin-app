@@ -2,17 +2,16 @@ import React, { useEffect, useState } from 'react'
 import CustomInput from '../Components/CustomInput'
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { InboxOutlined } from '@ant-design/icons';
-import { message, Upload } from 'antd';
 import Dropzone from 'react-dropzone';
 import { useSelector, useDispatch } from 'react-redux';
 import {  useFormik } from 'formik';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
  import { delImg, uploadImg } from '../features/upload/uploadSlice';
-import { createBlogs, resetState } from '../features/blogs/blogSlice';
-import {getCategories} from '../features/bcategory/bcategorySlice'
+import { createBlogs, getAblog, getBlogs, resetState, updateABlog } from '../features/blogs/blogSlice';
+import { getCategories } from '../features/bcategory/bcategorySlice';
+
 
 
  let schema = yup.object().shape({
@@ -30,23 +29,52 @@ const Addblog = () =>
   
    const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location= useLocation();
+  const getBlogId =location.pathname.split("/")[3];
+  
   const [images, setImages] = useState([]);
-
+  useEffect(() => {
+    if (getBlogId !== undefined) {
+      dispatch(resetState());
+      dispatch(getAblog(getBlogId));
+      img.push(blogImages)
+    } else {
+      dispatch(resetState());
+    }
+  }, [getBlogId]);
+  
   useEffect(() =>
   {
+    dispatch(resetState());
     dispatch(getCategories());
-  })
+  },[]);
 
   
   const imgState = useSelector((state) => state.upload.images);
   const bCatState = useSelector((state) => state.bCategory.bCategories)
   const blogState = useSelector((state) => state.blogs);
-  const { isSuccess, isError, isLoading, createdBlog} = blogState;
+  const { isSuccess, 
+    isError,
+     isLoading,
+      createdBlog,
+      updatedBlog,
+    blogName,
+  blogDesc,
+blogCategory,
+blogImages, } = blogState;
+
+ 
+ 
   useEffect(() =>
   {
     if (isSuccess && createdBlog)
     {
       toast.success("Blog Added Successfully!");
+    }
+    if (isSuccess && updatedBlog)
+    {
+      toast.success("Blog Updated Successfully!");
+      navigate("/admin/blog-list")
     }
     if (isError)
     {
@@ -68,32 +96,39 @@ const Addblog = () =>
    useEffect(() =>
   {
     formik.values.images = img;
-  }, [img]);
+  }, [blogImages]);
    const formik = useFormik({
+    enableReinitialize:true,
      initialValues: {
-       title: '',
-       description: '',
-       category: '',
-       images:'',
+       title: blogName || '',
+       description: blogDesc || '',
+       category: blogCategory || '',
+       images: '',
     },
     
     validationSchema: schema ,
     onSubmit: values =>
     {
-      alert(JSON.stringify(values));
+      const data = {id: getBlogId, blogData: values};
+      if(getBlogId !== undefined){
+        dispatch(updateABlog(data))
+dispatch(resetState());
+      }else{
+        alert(JSON.stringify(values));
       dispatch (createBlogs(values))
       formik.resetForm();
       setTimeout(() =>
       {
          dispatch(resetState());
-      }, 3000);
+      }, 300);
+      }
          },
   }); 
   
     
   return (
     <div>
-        <h3 className='mb-4 title'>Add Blog</h3>
+        <h3 className='mb-4 title'>{getBlogId !== undefined ? "Edit" : "Add" } Blog</h3>
     
         <div>
             <form action='' onSubmit={formik.handleSubmit}>
@@ -149,23 +184,9 @@ const Addblog = () =>
   )}
 </Dropzone>
           </div>
-          <div className='showimages d-flex flex-wrap gap-3'>
-            {imgState?.map((i, j) =>{
-              return (
-                <div className='position-relative' key={j}>
-                  <button
-                    type='button'
-                    onClick={() => dispatch(delImg(i.public_id))}
-                    className='btn-close position-absolute'
-                    style={{ top: "10px", right: "10px" }}></button>
-              <img src={i.url} alt='' width={200} height={200}/>
-            </div>
-              )
-            })}
-           
-          </div>
+         
                  <button className='btn btn-success border-0 rounded-3 my-5' type='submit'>
-                    Add Blog
+                 {getBlogId !== undefined ? "Edit" : "Add" } Blog
                  </button>
             </form>
         </div>

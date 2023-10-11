@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
  import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { createCoupon, getACoupon, resetState } from '../features/coupon/couponSlice';
+import { createCoupon, getACoupon, resetState, updateACoupon } from '../features/coupon/couponSlice';
 
 let schema = yup.object().shape({
     name: yup.string().required("Coupon Name is Required"),
@@ -19,12 +19,14 @@ const AddCoupon = () =>
   
   const dispatch = useDispatch();
   const location = useLocation();
+  const navigate =useNavigate();
   const getCouponId = location.pathname.split("/")[3];
   const newCoupon = useSelector((state) => state.coupon);
   const { isSuccess, isError, isLoading, createdCoupon,
     couponName,
     couponDiscount,
-    couponExpiry } = newCoupon;
+    couponExpiry,
+  updatedCoupon } = newCoupon;
   
   const changeDateFormet = (date) =>
   {
@@ -49,9 +51,10 @@ const AddCoupon = () =>
     {
       toast.success("Coupon Added Successfully!");
     }
-     if (isSuccess && couponName && couponDiscount && couponExpiry )
+     if (isSuccess && updatedCoupon )
     {
       toast.success("Coupon updated Successfully!");
+      navigate("/admin/coupon-list")
     }
     if (isError && couponName && couponDiscount && couponExpiry)
     {
@@ -69,14 +72,20 @@ const AddCoupon = () =>
     validationSchema: schema ,
     onSubmit: values =>
     {
-        
-      dispatch(createCoupon(values));
-      formik.resetForm();
-      setTimeout(() =>
-      {
+      if(getCouponId !==undefined){
+        const data= {id:getCouponId, couponData:values}
+        dispatch(updateACoupon(data))
         dispatch(resetState());
-      }, 300);
-     },
+      }else{
+        dispatch(createCoupon(values));
+        formik.resetForm();
+        setTimeout(() =>
+        {
+          dispatch(resetState());
+        }, 300);
+       }
+      },
+        
   }); 
   return (
     <div>

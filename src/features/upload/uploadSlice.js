@@ -1,5 +1,6 @@
 import { createSlice,createAsyncThunk, createAction } from "@reduxjs/toolkit";
 import uploadService from "./uploadService";
+import FormData from 'form-data';
 
 
 
@@ -7,7 +8,7 @@ export const uploadImg = createAsyncThunk('upload/images', async (data, thunkAPI
 {
     try
     {
-        const formData = new formData();
+        const formData = new FormData();
         for (let i = 0; i < data.length; i++)
         {
             formData.append("images", data[i]);
@@ -61,7 +62,7 @@ export const uploadSlice = createSlice({
                 state.isLoading = false;
                 state.isError = true;
                 state.isSuccess = false;
-                state.message = action.error;
+                state.message = "An error occurred";;
             })
             .addCase(delImg.pending, (state) =>
             {
@@ -79,7 +80,7 @@ export const uploadSlice = createSlice({
                 state.isLoading = false;
                 state.isError = true;
                 state.isSuccess = false;
-                state.message = action.payload;
+                state.message = "An error occurred";
             })
              .addCase(resetState, () => initialState);
     },
