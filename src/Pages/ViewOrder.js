@@ -56,7 +56,7 @@ const ViewOrder = () =>
    console.log(orderState);
    const data1 = [];
    if (orderState) { // Check if orderState is defined
-     for (let i = 0; i < orderState.length; i++) {
+     for (let i = 0; i < orderState?.length; i++) {
        data1.push({
          key: i + 1,
          name: orderState[i].product.title,
