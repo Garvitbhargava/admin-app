@@ -2,8 +2,7 @@ import axios from "axios";
 import { base_url } from "../../utlis/base_url";
 
 
-const getTokenFromLocalStorage = localStorage.getItem('user') ? JSON.parse(localStorage.getItem("user"))
-    : null;
+const getTokenFromLocalStorage = localStorage.getItem('user') 
 
 const config = {
     headers: {
