@@ -53,6 +53,7 @@ const Addprod = () =>
   const catState = useSelector((state) => state.pCategory.pCategories);
   const colorState = useSelector((state) => state.color.colors);
   const imgState = useSelector((state) => state.upload.images);
+  console.log(imgState, "fsdfsdf");
   const newProduct = useSelector((state) => state.product);
   const { isSuccess, isError, isLoading, createdProduct} = newProduct;
   useEffect(() =>

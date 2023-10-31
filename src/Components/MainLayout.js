@@ -11,7 +11,8 @@ import {AiOutlineDashboard ,
   import 'react-toastify/dist/ReactToastify.css';
 import {SiBrandfolder} from "react-icons/si"
 import {BiCategory,BiLogoBlogger} from "react-icons/bi"
-import {FaClipboardList,FaBlog} from "react-icons/fa"
+import {AiOutlineLogin} from "react-icons/ai"
+import {FaClipboardList,FaBlog,} from "react-icons/fa"
 import { IoIosNotificationsOutline } from "react-icons/io"
 import {RiCouponLine} from "react-icons/ri"
 import { Link, useNavigate } from 'react-router-dom';
@@ -43,7 +44,8 @@ const MainLayout = () => {
           defaultSelectedKeys={['']}
           onClick={({key}) => {
            if(key === "signout"){
-
+             localStorage.clear()
+             window.location.reload()
            }else{
             navigate(key);
            }
@@ -171,6 +173,12 @@ const MainLayout = () => {
                 key: 'enquiries',
                 icon: <FaClipboardList  className='fs-4'/>,
                 label: 'Enquiries',
+              },
+
+              {
+                key: 'signout',
+                icon: <AiOutlineLogin className='fs-4'/>,
+                label: 'Sign Out',
               },
 
           ]}

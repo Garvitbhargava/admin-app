@@ -2,8 +2,6 @@
 import './App.css';
 import { BrowserRouter as Router,Routes,Route } from 'react-router-dom';
 import Login from './Pages/Login';
-import Resertpassword from './Pages/Resertpassword';
-import Forgotpassword from './Pages/Forgotpassword';
 import MainLayout from './Components/MainLayout';
 import Dashboard from './Pages/Dashboard';
 import Enquiries from './Pages/Enquiries';
@@ -31,8 +29,6 @@ function App() {
    <Router>
     <Routes>
       <Route path='/' element={<Login />}/>
-      <Route path='/resert-password' element={<Resertpassword />}/>
-      <Route path='/forgot-password' element={<Forgotpassword />}/>
       <Route path='/admin' element={<MainLayout />}>
         <Route index element={<Dashboard />} />
         <Route path='enquiries' element={<Enquiries />}/>
