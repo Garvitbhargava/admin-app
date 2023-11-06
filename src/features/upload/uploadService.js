@@ -10,7 +10,7 @@ const uploadImg = async (data) =>
 };
 const deleteImg = async (id) =>
 {
-    const response = await axios.post(`${base_url}upload/delete-img ${id}`);
+    const response = await axios.post(`${base_url}upload/delete-img/${id}`);
     return response.data;
 };
 

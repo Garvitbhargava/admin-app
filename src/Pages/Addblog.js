@@ -50,9 +50,9 @@ const Addblog = () =>
   },[]);
 
   
-  const imgState = useSelector((state) => state.upload.images);
-  const bCatState = useSelector((state) => state.bCategory.bCategories)
-  const blogState = useSelector((state) => state.blogs);
+  const imgState = useSelector((state) => state?.upload?.images);
+  const bCatState = useSelector((state) => state?.bCategory?.bCategories)
+  const blogState = useSelector((state) => state?.blogs);
   const { isSuccess, 
     isError,
      isLoading,
@@ -114,7 +114,6 @@ blogImages, } = blogState;
         dispatch(updateABlog(data))
 dispatch(resetState());
       }else{
-        alert(JSON.stringify(values));
       dispatch (createBlogs(values))
       formik.resetForm();
       setTimeout(() =>
@@ -135,21 +134,28 @@ dispatch(resetState());
            
 
                <div className='mt-3'> 
-            <CustomInput type="text" lable="Enter Blog Title"
+            <CustomInput 
+             type="text"
+             label="Enter Blog Title"
              name="title"
-            onCh={formik.handleChange("title")}
-            onBlr={formik.handleBlur("title")}
-            val={formik.values.title}
+             onCh={formik.handleChange("title")}
+             onBlr={formik.handleBlur("title")}
+             val={formik.values.title}
           />
           <div className='error'>
             {formik.touched.title && formik.errors.title}
           </div>
                </div>
-          <select name='category'
-             onChange={formik.handleChange("category")}
-              onBlur={formik.handleBlur("category")}
-            value={formik.values.category}
-            className='form-control py-3  mt-3' id=''>
+          <select 
+          
+          name="category"
+          onChange={formik.handleChange("category")}
+          onBlur={formik.handleBlur("category")}
+          value={formik.values.category}
+          className="form-control py-3  mt-3"
+          id=""
+            
+            >
             <option value="">Select Blog Category</option>
               {bCatState.map((i, j) =>
             {
@@ -162,12 +168,11 @@ dispatch(resetState());
             {formik.touched.category && formik.errors.category}
           </div>
                 <ReactQuill 
-            theme="snow" 
-            className='mt-3 '
-             name="description"
+           theme="snow"
+           className="mt-3"
+           name="description"
            onChange={formik.handleChange("description")}
-              onBlur={formik.handleBlur("description")}
-            value={formik.values.description}
+           value={formik.values.description}
           />
            <div className='error'>
             {formik.touched.description && formik.errors.description}
@@ -183,7 +188,21 @@ dispatch(resetState());
     </section>
   )}
 </Dropzone>
-          </div>
+</div>
+          <div className='showimages d-flex flex-wrap gap-3 mt-3'>
+  {imgState?.map((image, index) => (
+    <div className='position-relative' key={index}>
+      <button
+        type='button'
+        onClick={() => dispatch(delImg(image?.public_id))}
+        className='btn-close position-absolute'
+        style={{ top: "10px", right: "10px" }}
+      ></button>
+      <img src={image.url} alt='' width={200} height={200} />
+    </div>
+  ))}
+</div>
+          
          
                  <button className='btn btn-success border-0 rounded-3 my-5' type='submit'>
                  {getBlogId !== undefined ? "Edit" : "Add" } Blog
