@@ -175,11 +175,11 @@ const MainLayout = () => {
                 label: 'Enquiries',
               },
 
-              {
-                key: 'signout',
-                icon: <AiOutlineLogin className='fs-4'/>,
-                label: 'Sign Out',
-              },
+              // {
+              //   key: 'signout',
+              //   icon: <AiOutlineLogin className='fs-4'/>,
+              //   label: 'Sign Out',
+              // },
 
           ]}
         />
