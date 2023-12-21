@@ -35,7 +35,6 @@ const Addblog = () => {
     if (getBlogId !== undefined) {
       dispatch(resetState());
       dispatch(getAblog(getBlogId));
-      img.push(blogImages);
     } else {
       dispatch(resetState());
     }
@@ -74,28 +73,22 @@ const Addblog = () => {
     }
   }, [isSuccess, isError, isLoading]);
 
-  const img = [];
-  imgState.forEach((i) => {
-    img.push({
-      public_id: i.public_id,
-      url: i.url,
-    });
-  });
-
   useEffect(() => {
-    formik.values.images = img;
-  }, [blogImages]);
+    formik.values.images = imgState.length > 0 ? imgState[0].url : "";
+  }, [imgState]);
+
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
       title: blogName || "",
       description: blogDesc || "",
       category: blogCategory || "",
-      images: "",
+      images: imgState.length > 0 ? imgState[0].url : "",
     },
 
     validationSchema: schema,
     onSubmit: (values) => {
+      console.log(values, "values");
       const data = { id: getBlogId, blogData: values };
       if (getBlogId !== undefined) {
         dispatch(updateABlog(data));
